@@ -1,12 +1,8 @@
 'use client'
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 import { X, Mail, Lock, User as UserIcon } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function LoginModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
     const { lang } = useLanguage();
@@ -24,14 +20,19 @@ export default function LoginModal({ isOpen, onClose }: { isOpen: boolean, onClo
         try {
             if (isLogin) {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw new Error(lang === 'en' ? 'Invalid email or password.' : 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+                if (error) throw new Error(error.message === 'Invalid login credentials' ? (lang === 'en' ? 'Invalid email or password.' : 'อีเมลหรือรหัสผ่านไม่ถูกต้อง') : error.message);
                 window.location.reload();
             } else {
-                const { error } = await supabase.auth.signUp({
+                const { data, error } = await supabase.auth.signUp({
                     email, password, options: { data: { full_name: fullName } }
                 });
                 if (error) throw new Error(error.message);
-                alert(lang === 'en' ? 'Registration successful! Please log in.' : 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+                
+                if (data.user && !data.session) {
+                    alert(lang === 'en' ? 'Registration successful! Please check your email to confirm your account.' : 'สมัครสมาชิกสำเร็จ! กรุณาตรวจสอบอีเมลและคลิกลิงก์ยืนยันตัวตน');
+                } else {
+                    alert(lang === 'en' ? 'Registration successful! Please log in.' : 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+                }
                 setIsLogin(true);
             }
         } catch (err: any) {

@@ -3,13 +3,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { X, UploadCloud, ShieldCheck, QrCode } from 'lucide-react';
 import useCartStore from '@/store/cartStore';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 import generatePayload from 'promptpay-qr';
 import { QRCodeSVG } from 'qrcode.react';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function CheckoutModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
     const { cart, clearCart } = useCartStore();

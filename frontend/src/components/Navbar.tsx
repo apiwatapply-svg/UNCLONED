@@ -4,13 +4,9 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Scissors, ShoppingBag, Menu, X, User, Globe } from 'lucide-react'
 import useCartStore from '@/store/cartStore'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 import LoginModal from './LoginModal'
 import { useLanguage } from '@/contexts/LanguageContext'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
