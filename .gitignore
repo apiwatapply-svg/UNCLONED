@@ -2,6 +2,7 @@
 .env
 .env.*
 .env*.local
+*.log
 
 # Backend secrets
 backend/*.env
